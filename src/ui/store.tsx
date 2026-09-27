@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { judge, runScenarios, suggestImprovements, type Judgement, type Scenarios, type Suggestion } from '../engine/analysis';
+import { assessAffordability, type Affordability } from '../engine/affordability';
 import { defaultPlan } from '../engine/defaults';
 import type { Plan } from '../engine/types';
 import { loadState, newSavedPlan, saveState, type SavedPlan, type StoreState } from '../storage/planStore';
@@ -17,6 +18,7 @@ interface Ctx {
   scenarios: Scenarios;
   judgement: Judgement;
   suggestions: Suggestion[];
+  affordability: Affordability;
   savedAt: Date | null;
   saveError: boolean;
   prefs: ViewPrefs;
@@ -94,6 +96,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const scenarios = useMemo(() => runScenarios(plan), [plan]);
   const judgement = useMemo(() => judge(scenarios), [scenarios]);
   const suggestions = useMemo(() => suggestImprovements(plan, judgement), [plan, judgement]);
+  const affordability = useMemo(() => assessAffordability(plan), [plan]);
 
   const value: Ctx = {
     state,
@@ -103,6 +106,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     scenarios,
     judgement,
     suggestions,
+    affordability,
     savedAt,
     saveError,
     prefs,

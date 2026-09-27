@@ -1,4 +1,5 @@
 import { loanSchedule } from '../engine/loan';
+import { AffordabilityCard } from '../ui/AffordabilityCard';
 import type { LoanMethod } from '../engine/types';
 import { Card, Grid, Note, NumberField, SelectField, Toggle } from '../ui/fields';
 import { man, yen } from '../ui/format';
@@ -53,6 +54,8 @@ export function HousingPage() {
           </>
         )}
       </Card>
+
+      <AffordabilityCard />
 
       <Card title="住宅購入の予定">
         <Toggle label="将来、住宅を購入する" checked={p.enabled} onChange={(v) => update((d) => void (d.housing.purchase.enabled = v))} />

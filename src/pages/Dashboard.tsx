@@ -9,7 +9,7 @@ import { YearDetail } from '../ui/YearDetail';
 const ICON = { good: '✅', warning: '⚠️', critical: '⛔' } as const;
 
 export function Dashboard({ go }: { go: (page: string) => void }) {
-  const { plan, scenarios, judgement, suggestions, prefs } = useStore();
+  const { plan, scenarios, judgement, suggestions, prefs, affordability: af } = useStore();
   const std = scenarios.standard;
   const s = std.summary;
   const mb = monthlyBudget(plan, std);
@@ -72,6 +72,24 @@ export function Dashboard({ go }: { go: (page: string) => void }) {
           </ul>
         </Card>
       )}
+
+      <Card
+        title="🏠 買える家の目安"
+        actions={
+          <button className="link" onClick={() => go('housing')}>
+            詳しく見る →
+          </button>
+        }
+      >
+        {af.max ? (
+          <p className="afford-summary">
+            {af.purchaseYear}年に購入する場合、{af.safe ? <>安心して買えるのは <strong>{man(af.safe.price)}</strong> まで、</> : null}
+            資金が足りる上限は <strong>{man(af.max.price)}</strong> です。
+          </p>
+        ) : (
+          <p className="afford-summary">{af.advice[0]}</p>
+        )}
+      </Card>
 
       <Card title="資産の推移（標準シナリオ）" actions={<span className="muted small">グラフをクリックするとその年の内訳を表示</span>}>
         <AssetChart rows={std.rows} result={std} prefs={prefs} onSelectYear={setYear} />

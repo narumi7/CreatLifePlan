@@ -836,3 +836,60 @@ table.cf td.neg {
 .plan-list .btn-row {
   margin: 0;
 }
+
+/* ---------- 買える家の目安 ---------- */
+.afford-headline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+  margin: 8px 0 12px;
+}
+.afford-headline > div {
+  display: flex;
+  flex-direction: column;
+}
+.afford-headline strong {
+  font-size: 1.5rem;
+  font-variant-numeric: tabular-nums;
+}
+.afford-scale {
+  position: relative;
+  display: flex;
+  height: 16px;
+  border-radius: 6px;
+  overflow: visible;
+  gap: 2px;
+}
+.afford-scale .zone {
+  height: 100%;
+  opacity: 0.85;
+}
+.afford-scale .zone:first-child {
+  border-radius: 6px 0 0 6px;
+}
+.afford-scale .zone.rest {
+  flex: 1;
+  border-radius: 0 6px 6px 0;
+}
+.afford-scale .marker {
+  position: absolute;
+  top: -5px;
+  width: 4px;
+  height: 26px;
+  margin-left: -2px;
+  background: var(--text);
+  border: 1px solid var(--surface);
+  border-radius: 2px;
+}
+.advice {
+  margin: 0;
+  padding-left: 1.2em;
+  display: grid;
+  gap: 4px;
+}
+.afford-summary {
+  margin: 0;
+}
+.strong {
+  font-weight: 700;
+}
