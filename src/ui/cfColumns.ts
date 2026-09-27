@@ -1,0 +1,30 @@
+import type { YearRow } from '../engine/simulate';
+
+/** キャッシュフロー表の列（画面・Excel・CSV で共通） */
+export const CF_COLUMNS: { key: string; label: string; get: (r: YearRow) => number; group?: 'income' | 'expense' | 'balance' | 'asset'; bold?: boolean }[] = [
+  { key: 'salarySelf', label: '給与（本人）', get: (r) => r.salarySelf, group: 'income' },
+  { key: 'salarySpouse', label: '給与（配偶者）', get: (r) => r.salarySpouse, group: 'income' },
+  { key: 'pension', label: '年金', get: (r) => r.pension, group: 'income' },
+  { key: 'severance', label: '退職金', get: (r) => r.severance, group: 'income' },
+  { key: 'childAllowance', label: '児童手当', get: (r) => r.childAllowance, group: 'income' },
+  { key: 'loanDeduction', label: '住宅ローン控除', get: (r) => r.loanDeduction, group: 'income' },
+  { key: 'otherIncome', label: 'その他収入', get: (r) => r.otherIncome, group: 'income' },
+  { key: 'incomeTotal', label: '収入合計', get: (r) => r.incomeTotal, group: 'income', bold: true },
+  { key: 'living', label: '生活費', get: (r) => r.living, group: 'expense' },
+  { key: 'housing', label: '住居費', get: (r) => r.housing, group: 'expense' },
+  { key: 'education', label: '教育費・出産', get: (r) => r.education, group: 'expense' },
+  { key: 'childLiving', label: '養育費', get: (r) => r.childLiving, group: 'expense' },
+  { key: 'events', label: 'ライフイベント', get: (r) => r.events, group: 'expense' },
+  { key: 'expenseTotal', label: '支出合計', get: (r) => r.expenseTotal, group: 'expense', bold: true },
+  { key: 'bufferPortion', label: 'うちバッファ分', get: (r) => r.bufferPortion, group: 'expense' },
+  { key: 'contribution', label: '積立投資', get: (r) => r.contribution, group: 'balance' },
+  { key: 'cashFlow', label: '年間収支', get: (r) => r.cashFlow, group: 'balance', bold: true },
+  { key: 'withdrawal', label: '投資からの取り崩し', get: (r) => r.withdrawal, group: 'balance' },
+  { key: 'cash', label: '現金残高', get: (r) => r.cash, group: 'asset' },
+  { key: 'nisa', label: 'NISA残高', get: (r) => r.investByType.nisa, group: 'asset' },
+  { key: 'ideco', label: 'iDeCo残高', get: (r) => r.investByType.ideco, group: 'asset' },
+  { key: 'taxable', label: '特定口座残高', get: (r) => r.investByType.taxable, group: 'asset' },
+  { key: 'financial', label: '金融資産合計', get: (r) => r.financial, group: 'asset', bold: true },
+  { key: 'loanBalance', label: 'ローン残高', get: (r) => r.loanBalance, group: 'asset' },
+  { key: 'netWorth', label: '純資産', get: (r) => r.netWorth, group: 'asset', bold: true },
+];
