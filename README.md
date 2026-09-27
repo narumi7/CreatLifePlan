@@ -7,17 +7,20 @@
 - 楽観・標準・悲観の3シナリオで判定（✅安心 / ⚠️注意 / ⛔不足）し、不足する場合は改善策を逆算して提案します
 - グラフはクリックでその年の内訳を表示。キャッシュフロー表、プラン比較、Excel（.xlsx）/CSV 出力に対応
 
+## ブラウザで使う
+
+- **公開版（GitHub Pages）: https://narumi7.github.io/CreatLifePlan/**
+  - main ブランチに変更が入ると自動で更新されます（`.github/workflows/pages.yml`）
+  - 入力したデータは各自のブラウザの中だけに保存され、サイトには送信されません
+- claude.ai アーティファクト版（本人のみ閲覧可）: https://claude.ai/artifact/Y94kXVrM3Q4BHWFFjoBQXk
+- `npm run build:artifact` で、すべてを1ファイルにまとめた `artifact/lifeplan.html` を作れます（アーティファクトの更新用）
+
 ## データの保存とプライバシー
 
 - 入力内容は **このブラウザの中（localStorage）だけ** に自動保存され、サーバーには一切送信しません
 - 本番ビルドには `connect-src 'none'` の Content-Security-Policy を入れ、外部通信そのものを禁止しています
 - 複数のプランを保存・複製・比較できます
 - バックアップファイル（JSON）に書き出せます。パスワードを設定すると AES-256-GCM（PBKDF2-SHA256 で鍵を導出）で暗号化されます
-
-## ブラウザで使う
-
-- インストール不要の公開版（claude.ai アーティファクト・本人のみ閲覧可）: https://claude.ai/artifact/Y94kXVrM3Q4BHWFFjoBQXk
-- `npm run build:artifact` で、すべてを1ファイルにまとめた `artifact/lifeplan.html` を作れます（アーティファクトの更新用）
 
 ## 開発
 
