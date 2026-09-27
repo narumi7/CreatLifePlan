@@ -88,7 +88,7 @@ export function HousingPage() {
             />
             {p.loanDeduction && (
               <Grid>
-                <NumberField label="控除対象の借入限度額" unit="万円" value={p.deductionCap} onChange={(v) => update((d) => void (d.housing.purchase.deductionCap = v))} hint="省エネ性能・世帯で異なります" />
+                <NumberField label="控除対象の借入限度額" unit="万円" value={p.deductionCap} onChange={(v) => update((d) => void (d.housing.purchase.deductionCap = v))} hint="2026〜30年入居：省エネ基準適合住宅なら一般世帯 2,000万円。性能・世帯で異なります" />
                 <NumberField label="控除期間" unit="年" value={p.deductionYears} onChange={(v) => update((d) => void (d.housing.purchase.deductionYears = v))} />
               </Grid>
             )}

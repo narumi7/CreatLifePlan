@@ -9,9 +9,9 @@ import {
   CHILD_ALLOWANCE,
   HOIKUEN_3TO5,
   HOIKUEN_UNDER3,
-  IDECO_CONTRIB_END_AGE,
-  IDECO_MONTHLY_LIMIT,
   IDECO_WITHDRAW_AGE,
+  idecoContribEndAge,
+  idecoMonthlyLimit,
   LIVING_AWAY_ALLOWANCE,
   NISA_ANNUAL_LIMIT,
   NISA_LIFETIME_LIMIT,
@@ -474,8 +474,8 @@ export function simulate(plan: Plan, opts: SimOptions = {}): SimResult {
       if (!contributing(a)) continue;
       let c = a.monthly * 12;
       if (a.type === 'ideco') {
-        const limit = IDECO_MONTHLY_LIMIT[owner(a)!.employment] * 12;
-        if (oAge >= IDECO_CONTRIB_END_AGE) c = 0;
+        const limit = idecoMonthlyLimit(owner(a)!.employment, year) * 12;
+        if (oAge >= idecoContribEndAge(year)) c = 0;
         if (c > limit) {
           warnings.add(`${a.name}: iDeCo の拠出上限（月${(limit / 12).toLocaleString()}円）に合わせて計算しています`);
           c = limit;

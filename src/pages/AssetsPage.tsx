@@ -63,7 +63,8 @@ export function AssetsPage() {
           const ownerAge = year - owner.birthYear;
           const years = Math.max(0, acc.contribEndAge - Math.max(ownerAge, acc.contribStartAge));
           const fv = futureValue(acc.monthly, acc.expectedReturn, years, acc.balance);
-          const ideco = acc.type === 'ideco' ? idecoLimitMonthly(owner.employment) : 0;
+          const ideco = acc.type === 'ideco' ? idecoLimitMonthly(owner.employment, year) : 0;
+          const idecoNext = acc.type === 'ideco' ? idecoLimitMonthly(owner.employment, 2027) : 0;
           return (
             <div key={acc.id} className="subcard">
               <div className="subcard-head">
@@ -90,7 +91,7 @@ export function AssetsPage() {
                     acc.type === 'nisa'
                       ? `上限 年${man(NISA_ANNUAL_LIMIT)}・生涯${man(NISA_LIFETIME_LIMIT)}`
                       : acc.type === 'ideco'
-                        ? `上限 月${yen(ideco)}（${owner.name}の働き方）。60歳まで引き出せません`
+                        ? `上限 月${yen(ideco)}${idecoNext !== ideco ? `（2027年から月${yen(idecoNext)}）` : ''}。企業年金がある場合はもっと少なくなります。60歳まで引き出せません`
                         : undefined
                   }
                 />

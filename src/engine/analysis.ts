@@ -1,7 +1,7 @@
 // シナリオ（楽観/標準/悲観）、総合判定、改善提案。
 
 import { finalWorkAge, livingBase, salaryFor, simulate, type SimResult } from './simulate';
-import { IDECO_MONTHLY_LIMIT } from './standards';
+import { idecoMonthlyLimit } from './standards';
 import type { Plan } from './types';
 
 export type ScenarioKey = 'optimistic' | 'standard' | 'pessimistic';
@@ -227,6 +227,6 @@ export function monthlyBudget(plan: Plan, standard: SimResult): MonthlyBudgetVie
   };
 }
 
-export function idecoLimitMonthly(employment: string): number {
-  return IDECO_MONTHLY_LIMIT[employment] ?? 23_000;
+export function idecoLimitMonthly(employment: string, year: number): number {
+  return idecoMonthlyLimit(employment, year);
 }

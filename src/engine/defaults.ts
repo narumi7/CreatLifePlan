@@ -111,7 +111,7 @@ export function defaultPlan(now = new Date()): Plan {
         propertyTax: 15 * MAN,
         maintenance: 30 * MAN,
         loanDeduction: true,
-        deductionCap: 3000 * MAN,
+        deductionCap: 2000 * MAN,
         deductionYears: 13,
       },
     },
