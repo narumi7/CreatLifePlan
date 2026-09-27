@@ -1,14 +1,50 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { exportCsv, exportExcel, downloadText } from '../export/excel';
 import { createBackup, isEncrypted, readBackup } from '../storage/backup';
 import { Card, Grid, Note, NumberField, Toggle } from '../ui/fields';
 import { useStore } from '../ui/store';
 
+/** 2回押しで実行する削除ボタン（埋め込み画面では confirm() が使えないため） */
+function ConfirmButton({ label, confirmLabel, onConfirm, className }: { label: ReactNode; confirmLabel: string; onConfirm: () => void; className?: string }) {
+  const [armed, setArmed] = useState(false);
+  useEffect(() => {
+    if (!armed) return;
+    const t = setTimeout(() => setArmed(false), 5000);
+    return () => clearTimeout(t);
+  }, [armed]);
+  return (
+    <button
+      className={`${className ?? 'btn ghost danger'} ${armed ? 'armed' : ''}`}
+      onClick={() => {
+        if (armed) {
+          setArmed(false);
+          onConfirm();
+        } else setArmed(true);
+      }}
+    >
+      {armed ? confirmLabel : label}
+    </button>
+  );
+}
+
 export function ExportCard() {
   const { active, plan, scenarios, judgement, suggestions } = useStore();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [done, setDone] = useState('');
   const input = { name: active.name, plan, scenarios, judgement, suggestions };
+  const run = async (fn: () => Promise<'saved' | 'declined'>, label: string) => {
+    setBusy(true);
+    setError('');
+    setDone('');
+    try {
+      if ((await fn()) === 'saved') setDone(`${label}を保存しました`);
+    } catch (e) {
+      setError(`保存できませんでした: ${(e as Error).message}`);
+    } finally {
+      setBusy(false);
+    }
+  };
   return (
     <Card title="Excel・スプレッドシートに出力">
       <p>
@@ -19,25 +55,16 @@ export function ExportCard() {
         <button
           className="btn primary"
           disabled={busy}
-          onClick={async () => {
-            setBusy(true);
-            setError('');
-            try {
-              await exportExcel(input);
-            } catch (e) {
-              setError(`出力に失敗しました: ${(e as Error).message}`);
-            } finally {
-              setBusy(false);
-            }
-          }}
+          onClick={() => run(() => exportExcel(input), 'Excel ファイル')}
         >
           {busy ? '作成中…' : '📊 Excel（.xlsx）をダウンロード'}
         </button>
-        <button className="btn" onClick={() => exportCsv(input)}>
+        <button className="btn" disabled={busy} onClick={() => run(() => exportCsv(input), 'CSV ファイル')}>
           CSV（キャッシュフロー表）
         </button>
       </div>
       {error && <p className="error">{error}</p>}
+      {done && <p className="msg">✅ {done}</p>}
     </Card>
   );
 }
@@ -67,14 +94,7 @@ function PlansCard() {
               <button className="btn ghost small" onClick={() => duplicatePlan(p.id)}>
                 複製
               </button>
-              <button
-                className="btn ghost danger small"
-                onClick={() => {
-                  if (confirm(`「${p.name}」を削除しますか？（元に戻せません）`)) deletePlan(p.id);
-                }}
-              >
-                削除
-              </button>
+              <ConfirmButton className="btn ghost danger small" label="削除" confirmLabel="もう一度押すと削除" onConfirm={() => deletePlan(p.id)} />
             </div>
           </li>
         ))}
@@ -130,7 +150,14 @@ function BackupCard() {
           onClick={async () => {
             const text = await createBackup(state.plans, password || undefined);
             const date = new Date().toISOString().slice(0, 10);
-            downloadText(text, `lifeplan-backup_${date}${password ? '.encrypted' : ''}.json`);
+            let result: 'saved' | 'declined';
+            try {
+              result = await downloadText(text, `lifeplan-backup_${date}${password ? '.encrypted' : ''}.json`);
+            } catch (e) {
+              setMsg(`⚠️ ${(e as Error).message}`);
+              return;
+            }
+            if (result === 'declined') return;
             setMsg(password ? '🔒 暗号化したバックアップを保存しました。パスワードは忘れないように保管してください（復元できません）。' : '💾 バックアップを保存しました（暗号化なし）。');
           }}
         >
@@ -171,14 +198,11 @@ function BackupCard() {
       )}
       {msg && <p className="msg">{msg}</p>}
       <hr />
-      <button
-        className="btn ghost danger"
-        onClick={() => {
-          if (confirm('このブラウザに保存しているすべてのプランを削除します。よろしいですか？（元に戻せません）')) resetAll();
-        }}
-      >
-        この端末のデータをすべて削除
-      </button>
+      <ConfirmButton
+        label="この端末のデータをすべて削除"
+        confirmLabel="もう一度押すとすべてのプランを削除（元に戻せません）"
+        onConfirm={resetAll}
+      />
     </Card>
   );
 }

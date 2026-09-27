@@ -29,13 +29,17 @@ function cspPlugin(): Plugin {
   };
 }
 
-export default defineConfig({
+// --mode artifact: claude.ai のアーティファクトとして公開する1ファイル版を dist-artifact/ に出力する。
+// 公開先が独自の CSP をかけるため、CSP の meta は入れずにすべてを1つのスクリプトにまとめる。
+export default defineConfig(({ mode }) => ({
   base: './',
-  plugins: [react(), cspPlugin()],
+  plugins: mode === 'artifact' ? [react()] : [react(), cspPlugin()],
   build: {
-    chunkSizeWarningLimit: 1500,
+    chunkSizeWarningLimit: 3000,
+    outDir: mode === 'artifact' ? 'dist-artifact' : 'dist',
+    rollupOptions: mode === 'artifact' ? { output: { inlineDynamicImports: true } } : undefined,
   },
   test: {
     environment: 'node',
   },
-});
+}));

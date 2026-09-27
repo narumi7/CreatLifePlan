@@ -16,6 +16,7 @@ import {
 } from '../engine/standards';
 import type { Plan } from '../engine/types';
 import { CF_COLUMNS } from '../ui/cfColumns';
+import { saveFile, type SaveResult } from './saveFile';
 
 const YEN = '#,##0';
 const PCT = '0.0%';
@@ -286,27 +287,15 @@ export async function buildWorkbook({ name, plan, scenarios, judgement, suggesti
   return wb;
 }
 
-function download(data: BlobPart, filename: string, type: string) {
-  const blob = new Blob([data], { type });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
 const stamp = () => new Date().toISOString().slice(0, 10);
 
-export async function exportExcel(input: ExportInput): Promise<void> {
+export async function exportExcel(input: ExportInput): Promise<SaveResult> {
   const wb = await buildWorkbook(input);
   const buf = await wb.xlsx.writeBuffer();
-  download(buf, `lifeplan_${stamp()}.xlsx`, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  return saveFile(buf as ArrayBuffer, `lifeplan_${stamp()}.xlsx`, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 }
 
-export function exportCsv(input: ExportInput): void {
+export function exportCsv(input: ExportInput): Promise<SaveResult> {
   const rows = input.scenarios.standard.rows;
   const head = ['年', '本人年齢', 'イベント', ...CF_COLUMNS.map((c) => c.label)];
   const esc = (v: string | number) => {
@@ -316,9 +305,9 @@ export function exportCsv(input: ExportInput): void {
   const lines = [head, ...rows.map((r) => [r.year, r.ageSelf, r.eventLabels.join(' / '), ...CF_COLUMNS.map((c) => Math.round(c.get(r)))])].map((l) =>
     l.map(esc).join(','),
   );
-  download('\uFEFF' + lines.join('\r\n'), `lifeplan-cashflow_${stamp()}.csv`, 'text/csv;charset=utf-8');
+  return saveFile('\uFEFF' + lines.join('\r\n'), `lifeplan-cashflow_${stamp()}.csv`, 'text/csv;charset=utf-8');
 }
 
-export function downloadText(text: string, filename: string): void {
-  download(text, filename, 'application/json');
+export function downloadText(text: string, filename: string): Promise<SaveResult> {
+  return saveFile(text, filename, 'application/json');
 }

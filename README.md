@@ -14,6 +14,11 @@
 - 複数のプランを保存・複製・比較できます
 - バックアップファイル（JSON）に書き出せます。パスワードを設定すると AES-256-GCM（PBKDF2-SHA256 で鍵を導出）で暗号化されます
 
+## ブラウザで使う
+
+- インストール不要の公開版（claude.ai アーティファクト・本人のみ閲覧可）: https://claude.ai/artifact/Y94kXVrM3Q4BHWFFjoBQXk
+- `npm run build:artifact` で、すべてを1ファイルにまとめた `artifact/lifeplan.html` を作れます（アーティファクトの更新用）
+
 ## 開発
 
 ```bash
